@@ -53,6 +53,10 @@ void usleep(__int64 usec) {
 	SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
 	WaitForSingleObject(timer, INFINITE);
 #else
-    Sleep(usec * 1000);
+    Sleep(usec / 1000);
 #endif
+}
+
+inline int _max(int a, int b) {
+	return ((a > b) ? a : b);
 }

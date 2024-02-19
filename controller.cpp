@@ -4,6 +4,8 @@
 
 #include "controller.h"
 
+int deadzone = 0;
+
 struct controller_value {
 	unsigned short bitmask;
 	const char* str;
@@ -79,7 +81,7 @@ inline vec2i process_stick(vec2i axes, short deadzone) {
 }
 
 void Controller::init() {
-
+	deadzone = (int)((float)(getenvnum_ex("ctrl_deadzone", 24)) / 100.f * (float)(0x7FFF));
 }
 
 void Controller::run() {
@@ -96,8 +98,8 @@ void Controller::run() {
 		if (dwResult == ERROR_SUCCESS) { /* controller is connected */
 			ZeroMemory(buffer, sizeof buffer);
 
-			vec2i left_stick = process_stick({ state.Gamepad.sThumbLX, state.Gamepad.sThumbLY }, (int)(deadzone * (float)(0x7FFF)));
-			vec2i right_stick = process_stick({ state.Gamepad.sThumbRX, state.Gamepad.sThumbRY }, (int)(deadzone * (float)(0x7FFF)));
+			vec2i left_stick = process_stick({ state.Gamepad.sThumbLX, state.Gamepad.sThumbLY }, deadzone);
+			vec2i right_stick = process_stick({ state.Gamepad.sThumbRX, state.Gamepad.sThumbRY }, deadzone);
 
 			SetEnvironmentVariable(ControllerEnvNames[i * 6 + 0], itoa_(state.Gamepad.bLeftTrigger));
 			SetEnvironmentVariable(ControllerEnvNames[i * 6 + 1], itoa_(state.Gamepad.bRightTrigger));
