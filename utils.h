@@ -56,4 +56,3 @@ void usleep(__int64 usec) {
     Sleep(usec * 1000);
 #endif
 }
-
