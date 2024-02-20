@@ -44,7 +44,8 @@ void Application::init() {
 
 }
 
-void Application::run() {
+// Win32 thread entry point
+DWORD CALLBACK Application::run(void *data) {
 
     timeBeginPeriod(1);
 
@@ -86,6 +87,7 @@ void Application::run() {
 void Application::unload() {
 
 #ifdef ENABLE_MISC
+    // Unload the low level keyboard hook, if it exists
     Misc::unload();
 #endif
 

@@ -3,6 +3,15 @@
 
 #include "keyboard.h"
 
+/*
+	INPUTS: NONE
+
+	OUTPUTS:
+		keyspressed
+		keyspressed_str
+
+*/
+
 const char *stringifiedVKs[] = {
 	"Undefined",
 	"Left mouse button",
@@ -296,7 +305,6 @@ void Keyboard::run() {
 
 	int isAnyKeyDown = 0, actionHappened = 0;
 	BOOL state = 0;
-	WORD idx = 1, idx2 = 1;
 
 	for (int i = 3; i < 0x100; ++i) {
 		state = GetAsyncKeyState(i);
@@ -324,6 +332,7 @@ void Keyboard::run() {
 	ZeroMemory(buffer1, sizeof(buffer1));
 	buffer[0] = '-';
 	buffer1[0] = '-';
+	WORD idx = 1, idx2 = 1;
 
 	for (int i = 0; i < 0x100; ++i) {
 		if (!pressed[i]) continue;

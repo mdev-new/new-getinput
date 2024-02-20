@@ -4,7 +4,41 @@
 
 #include "controller.h"
 
-int deadzone = 0;
+/*
+	INPUTS:
+		ctrl_deadzone
+	
+	OUTPUTS:
+		ctrl1_ltrig
+		ctrl1_rtrig
+		ctrl1_lthumbx
+		ctrl1_lthumby
+		ctrl1_rthumbx
+		ctrl1_rthumby
+		ctrl1_btns
+		ctrl2_ltrig
+		ctrl2_rtrig
+		ctrl2_lthumbx
+		ctrl2_lthumby
+		ctrl2_rthumbx
+		ctrl2_rthumby
+		ctrl2_btns
+		ctrl3_ltrig
+		ctrl3_rtrig
+		ctrl3_lthumbx
+		ctrl3_lthumby
+		ctrl3_rthumbx
+		ctrl3_rthumby
+		ctrl3_btns
+		ctrl4_ltrig
+		ctrl4_rtrig
+		ctrl4_lthumbx
+		ctrl4_lthumby
+		ctrl4_rthumbx
+		ctrl4_rthumby
+		ctrl4_btns
+
+*/
 
 struct controller_value {
 	unsigned short bitmask;
@@ -81,7 +115,7 @@ inline vec2i process_stick(vec2i axes, short deadzone) {
 }
 
 void Controller::init() {
-	deadzone = (int)((float)(getenvnum_ex("ctrl_deadzone", 24)) / 100.f * (float)(0x7FFF));
+	Controller::deadzone = (int)((float)(getenvnum_ex("ctrl_deadzone", 24)) / 100.f * (float)(0x7FFF));
 }
 
 void Controller::run() {
@@ -98,8 +132,8 @@ void Controller::run() {
 		if (dwResult == ERROR_SUCCESS) { /* controller is connected */
 			ZeroMemory(buffer, sizeof buffer);
 
-			vec2i left_stick = process_stick({ state.Gamepad.sThumbLX, state.Gamepad.sThumbLY }, deadzone);
-			vec2i right_stick = process_stick({ state.Gamepad.sThumbRX, state.Gamepad.sThumbRY }, deadzone);
+			vec2i left_stick = process_stick({ state.Gamepad.sThumbLX, state.Gamepad.sThumbLY }, Controller::deadzone);
+			vec2i right_stick = process_stick({ state.Gamepad.sThumbRX, state.Gamepad.sThumbRY }, Controller::deadzone);
 
 			SetEnvironmentVariable(ControllerEnvNames[i * 6 + 0], itoa_(state.Gamepad.bLeftTrigger));
 			SetEnvironmentVariable(ControllerEnvNames[i * 6 + 1], itoa_(state.Gamepad.bRightTrigger));

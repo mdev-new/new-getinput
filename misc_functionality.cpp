@@ -3,8 +3,6 @@
 
 #include "misc_functionality.h"
 
-HHOOK keyboardLowLevelHook = NULL;
-
 //https://stackoverflow.com/questions/7009080/detecting-full-screen-mode-in-windows
 bool isFullscreen(HWND windowHandle)
 {
@@ -47,14 +45,14 @@ void resizeConsoleIfNeeded(int *lastScreenX, int *lastScreenY) {
 //https://cboard.cprogramming.com/windows-programming/69905-disable-alt-key-commands.html
 LRESULT CALLBACK LowLevelKeyboardProc( int nCode, WPARAM wParam, LPARAM lParam )
 {
-	KBDLLHOOKSTRUCT* p = (KBDLLHOOKSTRUCT*)lParam;
-
     if (nCode == HC_ACTION) {
+		KBDLLHOOKSTRUCT* p = (KBDLLHOOKSTRUCT*)lParam;
+
 		if (p->vkCode == VK_RETURN && p->flags & LLKHF_ALTDOWN) return 1; //disable alt-enter
 		else if (p->vkCode == VK_F11) return 1;
 	}
 
-    return CallNextHookEx(keyboardLowLevelHook, nCode, wParam, lParam);
+    return CallNextHookEx(Misc::keyboardLowLevelHook, nCode, wParam, lParam);
 }
 
 DWORD GETINPUT_SUB CALLBACK ModeThread(void* data) {
@@ -106,12 +104,16 @@ void Misc::init() {
 		DrawMenuBar(hCon);
 
 		if (noresize == 2) {
-			keyboardLowLevelHook = SetWindowsHookEx(
+			Misc::keyboardLowLevelHook = SetWindowsHookEx(
 				WH_KEYBOARD_LL,
 				LowLevelKeyboardProc,
 				GetModuleHandle(NULL),
 				0
 			);
+		}
+
+		if(isFullscreen(hCon)) {
+			SendMessage(hCon, WM_SYSCOMMAND, SC_RESTORE, 0);
 		}
 	}
 
@@ -139,22 +141,21 @@ void Misc::init() {
 
 void Misc::run() {
 	static int lastscreenx = -1, lastscreeny = -1;
+	static HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	static HANDLE hCon = GetConsoleWindow();
 
 	if (noresize) {
-		SetWindowLong(hCon, GWL_STYLE, windowStyle);
-		DrawMenuBar(hCon);
-
 		if (isFullscreen(hCon)) {
 			SendMessage(hCon, WM_SYSCOMMAND, SC_RESTORE, 0);
-
 			//resizeConsoleIfNeeded(lastscreenx, lastscreeny); // what is this
 		}
 	}
 
 #ifndef WIN2K_BUILD
-	rasterx = getenvnum("rasterx");
-	rastery = getenvnum("rastery");
-	isRaster = rasterx && rastery;
+	static int prevRasterX = -1, prevRasterY = -1;
+	int rasterx = getenvnum("rasterx");
+	int rastery = getenvnum("rastery");
+	bool isRaster = rasterx && rastery;
 
 	// lets not set the font every frame
 	if (isRaster && (prevRasterX != rasterx || prevRasterY != rastery)) {
@@ -167,7 +168,7 @@ void Misc::run() {
 }
 
 void Misc::unload() {
-	if(keyboardLowLevelHook != NULL) {
-		UnhookWindowsHookEx(keyboardLowLevelHook);
+	if(Misc::keyboardLowLevelHook != NULL) {
+		UnhookWindowsHookEx(Misc::keyboardLowLevelHook);
 	}
 }

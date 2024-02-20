@@ -1,6 +1,9 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
+#include "mouse.h"
+#include "utils.h"
+
 /*
     INPUTS: 
         limitMouseX
@@ -15,9 +18,6 @@
 */
 
 // todo intextinput
-
-#include "mouse.h"
-#include "utils.h"
 
 DWORD GETINPUT_SUB CALLBACK MousePosThread(void* data) {
 	INPUT_RECORD ir[64];
