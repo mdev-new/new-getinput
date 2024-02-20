@@ -5,15 +5,15 @@
 #include "utils.h"
 
 /*
-    INPUTS: 
-        limitMouseX
-        limitMouseY
+	INPUTS: 
+		limitMouseX
+		limitMouseY
 
-    OUTPUTS:
-        click
-        wheeldelta
-        mousexpos
-        mouseypos
+	OUTPUTS:
+		click
+		wheeldelta
+		mousexpos
+		mouseypos
 
 */
 
@@ -42,7 +42,7 @@ void MouseEventProc(MOUSE_EVENT_RECORD& record) {
 	switch (record.dwEventFlags) {
 	case MOUSE_MOVED: {
 		int lmx = getenvnum("limitMouseX");
-        int lmy = getenvnum("limitMouseY");
+		int lmy = getenvnum("limitMouseY");
 
 		int mouseX = record.dwMousePosition.X + 1;
 		int mouseY = record.dwMousePosition.Y + 1;
@@ -56,9 +56,9 @@ void MouseEventProc(MOUSE_EVENT_RECORD& record) {
 
 	case MOUSE_WHEELED:
 		SetEnvironmentVariable(
-            "wheeldelta",
-            itoa_((signed short)(HIWORD(record.dwButtonState)) / WHEEL_DELTA)
-        );
+			"wheeldelta",
+			itoa_((signed short)(HIWORD(record.dwButtonState)) / WHEEL_DELTA)
+		);
 		break;
 
 	default: break;
@@ -72,7 +72,7 @@ void processEvnt(INPUT_RECORD ir) {
 		break;
 	}
 
-    // a terrible hack
+	// a terrible hack
 	case KEY_EVENT: /*{
 		if (inTextInput) {
 			DWORD w;
@@ -94,25 +94,25 @@ void processEvnt(INPUT_RECORD ir) {
 }
 
 void Mouse::init() {
-    SetEnvironmentVariable("click", "0");
-    SetEnvironmentVariable("wheeldelta", "0");
-    SetEnvironmentVariable("mousexpos", "0");
-    SetEnvironmentVariable("mouseypos", "0");
+	SetEnvironmentVariable("click", "0");
+	SetEnvironmentVariable("wheeldelta", "0");
+	SetEnvironmentVariable("mousexpos", "0");
+	SetEnvironmentVariable("mouseypos", "0");
 
 	HANDLE hReadThread = CreateThread(NULL, 0, MousePosThread, NULL, 0, NULL);
 }
 
 void Mouse::run() {
-    static BYTE mouseclick = 0;
+	static BYTE mouseclick = 0;
 
-    mouseclick =
-        (GetKeyState(VK_LBUTTON) & 0x80) >> 7 |
-        (GetKeyState(VK_RBUTTON) & 0x80) >> 6 |
-        (GetKeyState(VK_MBUTTON) & 0x80) >> 5;
+	mouseclick =
+		(GetKeyState(VK_LBUTTON) & 0x80) >> 7 |
+		(GetKeyState(VK_RBUTTON) & 0x80) >> 6 |
+		(GetKeyState(VK_MBUTTON) & 0x80) >> 5;
 
-    if (mouseclick && GetSystemMetrics(SM_SWAPBUTTON)) {
-        mouseclick |= mouseclick & 0b11;
-    }
+	if (mouseclick && GetSystemMetrics(SM_SWAPBUTTON)) {
+		mouseclick |= mouseclick & 0b11;
+	}
 
-    SetEnvironmentVariable("click", itoa_(mouseclick));
+	SetEnvironmentVariable("click", itoa_(mouseclick));
 }

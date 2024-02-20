@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include <timeapi.h>
 
+#define VERSION "0.0.1 (20-02-2024)"
+
 #include "utils.h"
 #include "config.h"
 
@@ -22,76 +24,77 @@ public:
 
 void Application::init() {
 
-    SetEnvironmentVariable("getinputInitialized", "0");
+	SetEnvironmentVariable("new_getinput_ver", VERSION);
+	SetEnvironmentVariable("getinputInitialized", "0");
 
 #ifdef ENABLE_CONTROLLER
-    Controller::init();
+	Controller::init();
 #endif
 
 #ifdef ENABLE_MOUSE
-    Mouse::init();
+	Mouse::init();
 #endif
 
 #ifdef ENABLE_KEYBOARD
-    Keyboard::init();
+	Keyboard::init();
 #endif
 
 #ifdef ENABLE_MISC
-    Misc::init();
+	Misc::init();
 #endif
 
-    SetEnvironmentVariable("getinputInitialized", "1");
+	SetEnvironmentVariable("getinputInitialized", "1");
 
 }
 
 // Win32 thread entry point
 DWORD CALLBACK Application::run(void *data) {
 
-    timeBeginPeriod(1);
+	timeBeginPeriod(1);
 
 	unsigned long long begin, took;
-    bool inFocus = true;
+	bool inFocus = true;
 
-    int sleep_time = 1000 / getenvnum_ex("getinput_tps", 40);
+	int sleep_time = 1000 / getenvnum_ex("getinput_tps", 40);
 
-    while(true) {
-        begin = GetTickCount64();
+	while(true) {
+		begin = GetTickCount64();
 
-        inFocus = GetForegroundWindow() == hCon;
+		inFocus = GetForegroundWindow() == hCon;
 
-        if(inFocus) {
+		if(inFocus) {
 
-        #ifdef ENABLE_CONTROLLER
-            Controller::run();
-        #endif
+		#ifdef ENABLE_CONTROLLER
+			Controller::run();
+		#endif
 
-        #ifdef ENABLE_MOUSE
-            Mouse::run();
-        #endif
+		#ifdef ENABLE_MOUSE
+			Mouse::run();
+		#endif
 
-        #ifdef ENABLE_KEYBOARD
-            Keyboard::run();
-        #endif
+		#ifdef ENABLE_KEYBOARD
+			Keyboard::run();
+		#endif
 
-        #ifdef ENABLE_MISC
-            Misc::run();
-        #endif
+		#ifdef ENABLE_MISC
+			Misc::run();
+		#endif
 
-        }
+		}
 
 		took = GetTickCount64() - begin;
 		Sleep(_max(0, sleep_time - took));
-    }
+	}
 }
 
 void Application::unload() {
 
 #ifdef ENABLE_MISC
-    // Unload the low level keyboard hook, if it exists
-    Misc::unload();
+	// Unload the low level keyboard hook, if it exists
+	Misc::unload();
 #endif
 
-    timeEndPeriod();
+	timeEndPeriod();
 
 }
 

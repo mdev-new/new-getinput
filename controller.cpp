@@ -7,7 +7,7 @@
 /*
 	INPUTS:
 		ctrl_deadzone
-	
+
 	OUTPUTS:
 		ctrl1_ltrig
 		ctrl1_rtrig

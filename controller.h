@@ -7,4 +7,3 @@ public:
 
 	static int deadzone = 0;
 };
-

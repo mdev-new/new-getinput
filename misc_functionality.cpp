@@ -45,14 +45,14 @@ void resizeConsoleIfNeeded(int *lastScreenX, int *lastScreenY) {
 //https://cboard.cprogramming.com/windows-programming/69905-disable-alt-key-commands.html
 LRESULT CALLBACK LowLevelKeyboardProc( int nCode, WPARAM wParam, LPARAM lParam )
 {
-    if (nCode == HC_ACTION) {
+	if (nCode == HC_ACTION) {
 		KBDLLHOOKSTRUCT* p = (KBDLLHOOKSTRUCT*)lParam;
 
 		if (p->vkCode == VK_RETURN && p->flags & LLKHF_ALTDOWN) return 1; //disable alt-enter
 		else if (p->vkCode == VK_F11) return 1;
 	}
 
-    return CallNextHookEx(Misc::keyboardLowLevelHook, nCode, wParam, lParam);
+	return CallNextHookEx(Misc::keyboardLowLevelHook, nCode, wParam, lParam);
 }
 
 DWORD GETINPUT_SUB CALLBACK ModeThread(void* data) {

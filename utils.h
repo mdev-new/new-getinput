@@ -1,12 +1,22 @@
 #pragma once
 
-#include <stdlib.h>
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <string.h>
+
+inline int _max(int a, int b) {
+	return ((a > b) ? a : b);
+}
+
+inline int _abs(int a) {
+	return (a >= 0) ? a : -a;
+}
 
 char * itoa_(int i) {
 	static char buffer[21] = { 0 };
 
 	char* c = buffer + 19; // buffer[20] must be \0
-	int x = abs(i);
+	int x = _abs(i);
 
 	do {
 		*--c = 48 + x % 10;
@@ -49,14 +59,15 @@ void usleep(__int64 usec) {
 
 	ft.QuadPart = -(10 * usec); // Convert to 100 nanosecond interval, negative value indicates relative time
 
-	if (timer == NULL) [[unlikely]] { timer = CreateWaitableTimer(NULL, TRUE, NULL); }
+	if (timer == NULL) [[unlikely]] {
+		timer = CreateWaitableTimer(NULL, TRUE, NULL);
+	}
+
 	SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0);
 	WaitForSingleObject(timer, INFINITE);
 #else
-    Sleep(usec / 1000);
+	// todo: research
+	// win2k probably supports waitable timers
+	Sleep(usec / 1000);
 #endif
-}
-
-inline int _max(int a, int b) {
-	return ((a > b) ? a : b);
 }

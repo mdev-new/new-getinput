@@ -68,7 +68,7 @@ NOMANGLE EXPORT void CALLBACK start(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLin
 
 #ifdef WIN2K_BUILD
 	while (hDll == NULL);
-	Sleep(5);
+	Sleep(100); //100ms delay
 #else
 	GetModuleHandleEx(
 		GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -97,4 +97,8 @@ NOMANGLE EXPORT void CALLBACK start(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLin
 		CloseHandle(hProcess);
 	}
 	return;
+}
+
+NOMANGLE EXPORT void CALLBACK printver(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
+	MessageBox(NULL, VERSION, "Version", 0);
 }
